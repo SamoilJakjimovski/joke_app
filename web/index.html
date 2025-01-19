@@ -1,25 +1,12 @@
+<!-- In index.html -->
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
-
+  
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -34,5 +21,45 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  
+  <!-- Update Firebase scripts to use compat version -->
+  <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-messaging-compat.js"></script>
+  
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFMlxGiBTx497V5mP7AT9I_8nlkOb_T34",
+      authDomain: "joke-app-web.firebaseapp.com",
+      projectId: "joke-app-web",
+      storageBucket: "joke-app-web.firebasestorage.app",
+      messagingSenderId: "354114895059",
+      appId: "1:354114895059:web:5ba9e132f57ecdc97e2826",
+      measurementId: "G-QT12CJ38T1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    messaging.onMessage((payload) => {
+      console.log('Message received. ', payload);
+    });
+
+    // Request permission and get token
+    async function initializeFirebaseMessaging() {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const token = await messaging.getToken({
+            vapidKey: 'BMbXkip8o_J8PoC4H8bU0zAk3TR_tzI_4_FU2BGiqDSTn-ATTqpfUkygX7HanFu4bNtUPba7_c8hUlCuSpmFfgU'
+          });
+          console.log('FCM Token:', token);
+        }
+      } catch (err) {
+        console.error('Error initializing Firebase Messaging:', err);
+      }
+    }
+
+    initializeFirebaseMessaging();
+  </script>
 </body>
 </html>

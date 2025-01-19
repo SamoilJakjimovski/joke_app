@@ -1,7 +1,51 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-void main() {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: "AIzaSyCFMlxGiBTx497V5mP7AT9I_8nlkOb_T34",
+      authDomain: "joke-app-web.firebaseapp.com",
+      projectId: "joke-app-web",
+      storageBucket: "joke-app-web.firebasestorage.app",
+      messagingSenderId: "354114895059",
+      appId: "1:354114895059:web:5ba9e132f57ecdc97e2826",
+      measurementId: "G-QT12CJ38T1"
+    ),
+  );
+
+  // Initialize Firebase Messaging
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // Request permission for push notifications
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  print('User granted permission: ${settings.authorizationStatus}');
+
+  // Get the device token
+  String? token = await messaging.getToken();
+  print("Device Token: $token");
+
+  // Handle foreground messages
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Message received: ${message.notification?.title}');
+  });
+
   runApp(JokeApp());
 }
 
